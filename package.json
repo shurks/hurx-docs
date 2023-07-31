@@ -1,0 +1,35 @@
+{
+	"name": "@hurx/todo",
+	"displayName": "Hurx todo",
+	"description": "A todo list for the Hurx language",
+	"version": "1.0.0",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"scripts": {
+		"compile": "tsc",
+		"start": "ts-node-dev --watch ./src,./docs --respawn --ignore-watch node_modules -r tsconfig-paths/register ./src",
+		"clean": "rimraf --glob ./dist",
+		"prepackage": "npm run clean && npm run compile && ts-node ./src/prepackage --execute-prepackage",
+		"package": "cd ./dist && npm publish --access public"
+	},
+	"keywords": [
+        "TODO"
+	],
+	"author": "Stan H",
+	"license": "MIT",
+	"dependencies": {
+		"chalk": "4.0.0",
+		"inversify": "^6.0.1",
+		"inversify-binding-decorators": "^4.0.0",
+		"nodemon": "^2.0.22",
+		"reflect-metadata": "^0.1.13",
+		"rimraf": "^5.0.0",
+		"rxjs": "^7.8.1",
+		"ts-node-dev": "^2.0.0",
+		"typescript": "^5.0.4"
+	},
+	"devDependencies": {
+		"@types/node": "^18.15.11",
+		"tsconfig-paths": "^4.2.0"
+	}
+}
