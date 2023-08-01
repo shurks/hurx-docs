@@ -1,3 +1,4 @@
+import * as child from 'child_process'
 import * as fs from 'fs'
 import path = require('path')
 
@@ -15,14 +16,15 @@ interface QuireIOObject {
     tasks: QuireIOObject[]
 }
 const quire: QuireIOObject = JSON.parse(fs.readFileSync(path.join(__dirname, '../', 'tasks.json')).toString('utf-8'))
-const parseQuire = (quire: QuireIOObject, index: number|null = null, _path: string = path.join(__dirname, '../', 'docs')) => {
+const parseQuire = (quire: QuireIOObject, index: number|null = null, _path: string = path.join(__dirname, '../', 'docs'), level: number = 1): string => {
+    let string = '\n' + new Array(level).fill('').map((v, i, a) => i === a.length - 1 ? ' - ' : '    ').join('') + quire.name
     if (index === null) {
         fs.rmSync(_path, {
             force: true,
             recursive: true
         })
         for (let i = 0; i < (quire.tasks || []).length; i ++) {
-            parseQuire(quire.tasks[i], i, path.join(_path, i.toString()))
+            string += parseQuire(quire.tasks[i], i, path.join(_path, i.toString()))
         }
     }
     else {
@@ -38,11 +40,12 @@ const parseQuire = (quire: QuireIOObject, index: number|null = null, _path: stri
         fs.writeFileSync(path.join(_path, 'i.md'), index.toString())
         fs.writeFileSync(path.join(_path, 'name.md'), quire.name)
         for (let i = 0; i < (quire.tasks || []).length; i ++) {
-            parseQuire(quire.tasks[i], i, path.join(_path, i.toString()))
+            string += parseQuire(quire.tasks[i], i, path.join(_path, i.toString()), level + 1)
         }
     }
+    return string
 }
-parseQuire(quire)
+const rootContent = parseQuire(quire).split('\n').filter((v, i) => i > 1).join('\n')
 interface DirObject {
     total: number,
     done: number,
@@ -285,7 +288,7 @@ const buildDocs = (dir: DirObject, dirs: DirObject[] = []) => {
                 const fontSize = (size === 'h1' ? 32 : 24) * 0.6
                 const badge = dir.done === dir.total && dir.total > 0
                     ? 'Done'
-                    : `${dir.done} <span style="font-size: ${fontSize * 1.5}px; vertical-align: middle; font-weight: 300;">/</span> ${dir.total + todos.length}`
+                    : `${dir.done} <span style="font-size: ${fontSize * 1.5}px; vertical-align: middle; font-weight: 300;">/</span> ${(dir.total + (size === 'h1' ? -1 : 0)) + todos.length}`
                 return `${text} <span style="background-color: ${backgroundColor}; color: ${color}; padding: 10px; border-radius: 100px; font-size: ${fontSize}px; vertical-align: top;">${badge}</span>`
             }
             
@@ -300,6 +303,8 @@ const buildDocs = (dir: DirObject, dirs: DirObject[] = []) => {
             // Generate the top headers badge
             fileContent = generateTodoBadge(fileContent, 'h1', dir)
             fileContentRoot = generateTodoBadge(fileContentRoot, 'h1', dir)
+
+            fileContentRoot += '# Overview\n_____\n' + rootContent + '\n______\n# Todo\'s\n______\n'
 
             // Generate the badge for the docs header
             if (todos.length) {
@@ -352,3 +357,5 @@ const buildDocs = (dir: DirObject, dirs: DirObject[] = []) => {
     }
 }
 buildDocs(readdir(path.join(__dirname, '../docs')))
+
+child.execSync('git add . && git commit -m "Update" && git push')

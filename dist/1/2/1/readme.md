@@ -1,4 +1,4 @@
-# `docs.hurx.io` automatically redirects to `docs.hurx.io/@hurx` <span style="background-color: #FF1744; color: #FFFFFF; padding: 10px; border-radius: 100px; font-size: 19.2px; vertical-align: top;">0 <span style="font-size: 28.799999999999997px; vertical-align: middle; font-weight: 300;">/</span> 1</span>
+# `docs.hurx.io` automatically redirects to `docs.hurx.io/@hurx` <span style="background-color: #FF1744; color: #FFFFFF; padding: 10px; border-radius: 100px; font-size: 19.2px; vertical-align: top;">0 <span style="font-size: 28.799999999999997px; vertical-align: middle; font-weight: 300;">/</span> 0</span>
 No description available
 
 _____
