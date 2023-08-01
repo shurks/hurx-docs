@@ -248,17 +248,17 @@ const buildDocs = (dir: DirObject, dirs: DirObject[] = []) => {
                 processFile(contents, false)
                 // fileContent += contents
                 // fileContentRoot += contents
+                append(`\n\n_____\n`)
             }
             else {
-                fileContent += `No description available`
-                fileContentRoot += `No description available`
+                // fileContent += `No description available`
+                // fileContentRoot += `No description available`
                 // todos.push('Add a description')
                 // dir.total ++
                 // dirs.forEach((dir) => {
                 //     dir.total ++
                 // })
             }
-            append(`\n\n_____\n`)
             const generateTodoBadge = (text: string, size: 'h1'|'h2', dir: DirObject): string => {
                 // Replace the first line if there's multiple lines
                 if (/\r\n|\r|\n/g.test(text)) {

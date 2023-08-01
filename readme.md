@@ -1,7 +1,4 @@
 # Project root <span style="background-color: #FFF117; color: #222222; padding: 10px; border-radius: 100px; font-size: 19.2px; vertical-align: top;">4 <span style="font-size: 28.799999999999997px; vertical-align: middle; font-weight: 300;">/</span> 235</span>
-No description available
-
-_____
 # Overview
 _____
  - Framework
