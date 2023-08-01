@@ -1,0 +1,1 @@
+A plugin to make `hurx` development more streamlined for certain contexts

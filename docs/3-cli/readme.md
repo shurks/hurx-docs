@@ -1,1 +1,0 @@
-A command line interface that generates Hurx related things and offers help as well.

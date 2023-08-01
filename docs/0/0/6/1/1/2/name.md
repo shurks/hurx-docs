@@ -1,0 +1,1 @@
+Workspace `hurx new workspace`

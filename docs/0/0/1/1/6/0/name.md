@@ -1,0 +1,1 @@
+Load a TypeScript module into a Hurx module

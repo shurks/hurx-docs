@@ -1,0 +1,1 @@
+Generates typescript codebase `dist/ts`

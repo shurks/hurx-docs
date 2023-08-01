@@ -1,0 +1,1 @@
+Each repository is put in the /projects folder and will be installed

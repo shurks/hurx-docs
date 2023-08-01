@@ -7,6 +7,39 @@ if (fs.existsSync(path.join(__dirname, '../', 'dist'))) {
         force: true
     })
 }
+interface QuireIOObject {
+    id: number
+    name: string
+    description?: string
+    state: 0|100
+    tasks: QuireIOObject[]
+}
+const quire: QuireIOObject = JSON.parse(fs.readFileSync(path.join(__dirname, '../', 'tasks.json')).toString('utf-8'))
+const parseQuire = (quire: QuireIOObject, index: number|null = null, _path: string = path.join(__dirname, '../', 'docs')) => {
+    if (index === null) {
+        fs.rmSync(_path, {
+            force: true,
+            recursive: true
+        })
+        for (let i = 0; i < (quire.tasks || []).length; i ++) {
+            parseQuire(quire.tasks[i], i, path.join(_path, i.toString()))
+        }
+    }
+    else {
+        fs.mkdirSync(_path, {
+            recursive: true
+        })
+        if (quire.description) {
+            fs.writeFileSync(path.join(_path, 'readme.md'), quire.description)
+        }
+        fs.writeFileSync(path.join(_path, 'i.md'), index.toString())
+        fs.writeFileSync(path.join(_path, 'name.md'), quire.name)
+        for (let i = 0; i < (quire.tasks || []).length; i ++) {
+            parseQuire(quire.tasks[i], i, path.join(_path, i.toString()))
+        }
+    }
+}
+parseQuire(quire)
 interface DirObject {
     total: number,
     done: number,
@@ -15,19 +48,23 @@ interface DirObject {
     content?: { [fileName: string]: DirObject },
     type: 'dir'|'file'
     index: number|null
+    name: string
 }
 const readdir = (_path: string, _contentsPath: DirObject[] = []): DirObject => {
     const hasReadMe = fs.existsSync(path.join(_path, 'readme.md')) || fs.existsSync(path.join(_path, 'index.md'))
+    const hasName = fs.existsSync(path.join(_path, 'name.md'))
+    const hasIndex = fs.existsSync(path.join(_path, 'i.md'))
     const contents: DirObject = {
         total: !hasReadMe
             ? 1
             : 0,
         done: 0,
         path: _path,
+        name: hasName ? fs.readFileSync(path.join(_path, 'name.md')).toString('utf-8') : _path.split(path.sep).pop() || '',
+        index: hasIndex ? Number(fs.readFileSync(path.join(_path, 'i.md')).toString('utf-8')) : null,
         segment: _path.split(path.sep).pop() || '',
         content: {} as any,
         type: 'dir',
-        index: null
     }
     if (/^[0-9]+(\-)?/g.test(contents.segment)) {
         contents.index = Number(contents.segment.replace(/(?<=^[0-9]+).*$/g, ''))
@@ -183,7 +220,7 @@ const buildDocs = (dir: DirObject, dirs: DirObject[] = []) => {
         append('\n')
     }
     let upperCamelCaseKey = generateUpperCamelCaseKey(dir)
-    let fileContent = `# ${baseDistPath === distPath ? 'Project root' : upperCamelCaseKey}\n`
+    let fileContent = `# ${baseDistPath === distPath ? 'Project root' : dir.name}\n`
     let fileContentRoot = fileContent
     let todos: string[] = []
 
@@ -279,8 +316,8 @@ const buildDocs = (dir: DirObject, dirs: DirObject[] = []) => {
                 const tildes = subdir.total - subdir.done === 0 && subdir.total > 0
                     ? `~~`
                     : ''
-                fileContent += `${generateTodoBadge(`## ${tildes}[${generateUpperCamelCaseKey(subdir)}](./${subdir.segment}/readme.md)${tildes}`, 'h2', subdir)}`
-                fileContentRoot += `${generateTodoBadge(`## ${tildes}[${generateUpperCamelCaseKey(subdir)}](./dist/${subdir.segment}/readme.md)${tildes}`, 'h2', subdir)}`
+                fileContent += `${generateTodoBadge(`## ${tildes}[${subdir.name}](./${subdir.segment}/readme.md)${tildes}`, 'h2', subdir)}`
+                fileContentRoot += `${generateTodoBadge(`## ${tildes}[${subdir.name}](./dist/${subdir.segment}/readme.md)${tildes}`, 'h2', subdir)}`
                 const _path = fs.existsSync(path.join(subdir.path, 'readme.md'))
                     ? path.join(subdir.path, 'readme.md')
                     : fs.existsSync(path.join(subdir.path, 'índex.md'))

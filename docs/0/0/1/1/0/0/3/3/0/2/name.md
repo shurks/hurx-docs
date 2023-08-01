@@ -1,0 +1,1 @@
+Dependencies from `node_modules` are parsed as well

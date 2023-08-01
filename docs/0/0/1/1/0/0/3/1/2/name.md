@@ -1,0 +1,1 @@
+Automatically create `index.js` files

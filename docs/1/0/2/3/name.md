@@ -1,0 +1,1 @@
+Analytics `/analytics` or `analytics.hurx.io/[organisation id]`

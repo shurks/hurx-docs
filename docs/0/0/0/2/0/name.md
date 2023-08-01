@@ -1,0 +1,1 @@
+Installs all the repositories that build up the framework

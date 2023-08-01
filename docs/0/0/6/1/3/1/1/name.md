@@ -1,0 +1,1 @@
+Upon file change `tsc` runs again

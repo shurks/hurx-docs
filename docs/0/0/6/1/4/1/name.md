@@ -1,0 +1,1 @@
+`hurx build [environment]`

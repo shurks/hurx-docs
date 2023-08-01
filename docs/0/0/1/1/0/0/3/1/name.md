@@ -1,0 +1,1 @@
+Output directory for javascript source `dist/js`

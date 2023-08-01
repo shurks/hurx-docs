@@ -1,0 +1,1 @@
+Vscode extension `@hurx/vscode`

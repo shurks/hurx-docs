@@ -1,0 +1,1 @@
+Saves an error log in `dist/logs/errors`

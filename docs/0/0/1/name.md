@@ -1,0 +1,1 @@
+Core functionality `@hurx/core`

@@ -1,0 +1,1 @@
+Automatically links local projects to npm

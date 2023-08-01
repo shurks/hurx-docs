@@ -1,0 +1,1 @@
+Automatically detects whether it's a user or organisation

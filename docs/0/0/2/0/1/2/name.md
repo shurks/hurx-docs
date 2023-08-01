@@ -1,0 +1,1 @@
+applyEndPatternLast = 1

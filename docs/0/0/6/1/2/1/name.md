@@ -1,0 +1,1 @@
+Watches all files in the current hurx project

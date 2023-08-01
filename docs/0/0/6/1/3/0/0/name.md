@@ -1,0 +1,1 @@
+All `.hurx` files will be converted to `.ts`

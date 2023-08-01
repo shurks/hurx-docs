@@ -1,0 +1,1 @@
+A place where people can learn to program, by using the `Hurx` language

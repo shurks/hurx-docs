@@ -1,0 +1,1 @@
+Then runs `hurx build [environment]`

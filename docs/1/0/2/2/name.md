@@ -1,0 +1,1 @@
+Monetization `/monetization` or `monetization.hurx.io/[organisation id]`

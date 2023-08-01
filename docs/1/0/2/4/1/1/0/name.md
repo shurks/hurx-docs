@@ -1,0 +1,1 @@
+Shows the documentation for a `hurx` project based on its `jsDoc` and `@doc` declarations

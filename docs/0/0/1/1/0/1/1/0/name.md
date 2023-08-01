@@ -1,0 +1,1 @@
+Uses `bin` as the output directory

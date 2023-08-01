@@ -1,0 +1,1 @@
+Manages and bundles all Hurx repositories

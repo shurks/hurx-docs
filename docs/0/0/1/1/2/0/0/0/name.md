@@ -1,0 +1,1 @@
+Saves a log in `dist/logs/analytics`

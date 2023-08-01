@@ -1,0 +1,1 @@
+Code coverage generator `@hurx/coverage`

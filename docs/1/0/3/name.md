@@ -1,0 +1,1 @@
+Manage account `/account` or `account.hurx.io`

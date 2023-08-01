@@ -1,0 +1,1 @@
+Run `hurx run [environment name]`

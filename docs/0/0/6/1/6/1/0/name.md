@@ -1,0 +1,1 @@
+Specify your organisation, so `hurx install`prompts the available packages

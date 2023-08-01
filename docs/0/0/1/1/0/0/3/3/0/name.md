@@ -1,0 +1,1 @@
+One minified file `dist/bundle/[package name].min.js`

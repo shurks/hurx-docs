@@ -1,0 +1,1 @@
+Transpiles everything to the latest version of `typescript`

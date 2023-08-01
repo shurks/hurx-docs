@@ -1,0 +1,1 @@
+Shows a dashboard page

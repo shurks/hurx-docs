@@ -1,0 +1,1 @@
+A dashboard page to manage a specific package

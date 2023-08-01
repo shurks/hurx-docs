@@ -1,0 +1,1 @@
+The command line interface (CLI) `@hurx/cli`

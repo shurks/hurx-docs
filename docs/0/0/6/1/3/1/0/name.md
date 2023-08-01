@@ -1,0 +1,1 @@
+Watches for file changes if there are errors

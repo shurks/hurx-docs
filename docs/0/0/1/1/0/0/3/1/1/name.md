@@ -1,0 +1,1 @@
+Contains `.d.ts` file(s)

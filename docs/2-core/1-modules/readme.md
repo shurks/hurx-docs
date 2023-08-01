@@ -1,1 +1,0 @@
-All the modules that form the core of Hurx.

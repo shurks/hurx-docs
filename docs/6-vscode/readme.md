@@ -1,1 +1,0 @@
-All vscode functionality for Hurx

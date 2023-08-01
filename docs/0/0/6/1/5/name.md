@@ -1,0 +1,1 @@
+Installing a project/workspace `hurx install [package name]`

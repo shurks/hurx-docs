@@ -1,0 +1,1 @@
+Main method will be called upon loading

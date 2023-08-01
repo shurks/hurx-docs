@@ -1,0 +1,1 @@
+Clones an npm package or github repository

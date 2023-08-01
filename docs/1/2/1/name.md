@@ -1,0 +1,1 @@
+`docs.hurx.io` automatically redirects to `docs.hurx.io/@hurx`
