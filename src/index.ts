@@ -304,6 +304,9 @@ const buildDocs = (dir: DirObject, dirs: DirObject[] = []) => {
             fileContent = generateTodoBadge(fileContent, 'h1', dir)
             fileContentRoot = generateTodoBadge(fileContentRoot, 'h1', dir)
 
+            if (baseDistPath === distPath) {
+                fileContent += '# Overview\n_____\n' + rootContent + '\n______\n# Todo\'s\n______\n'
+            }
             fileContentRoot += '# Overview\n_____\n' + rootContent + '\n______\n# Todo\'s\n______\n'
 
             // Generate the badge for the docs header
