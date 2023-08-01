@@ -30,7 +30,10 @@ const parseQuire = (quire: QuireIOObject, index: number|null = null, _path: stri
             recursive: true
         })
         if (quire.description) {
-            fs.writeFileSync(path.join(_path, 'readme.md'), quire.description)
+            fs.writeFileSync(path.join(_path, 'readme.md'), `${quire.state === 100 ? '[x]' : '[]'} ${quire.description}`)
+        }
+        else if (quire.state === 100) {
+            fs.writeFileSync(path.join(_path, 'readme.md'), `[x] ${quire.name}`)
         }
         fs.writeFileSync(path.join(_path, 'i.md'), index.toString())
         fs.writeFileSync(path.join(_path, 'name.md'), quire.name)
