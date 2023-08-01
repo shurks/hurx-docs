@@ -17,8 +17,11 @@ interface DirObject {
     index: number|null
 }
 const readdir = (_path: string, _contentsPath: DirObject[] = []): DirObject => {
+    const hasReadMe = fs.existsSync(path.join(_path, 'readme.md')) || fs.existsSync(path.join(_path, 'index.md'))
     const contents: DirObject = {
-        total: 0,
+        total: !hasReadMe
+            ? 1
+            : 0,
         done: 0,
         path: _path,
         segment: _path.split(path.sep).pop() || '',
@@ -36,8 +39,8 @@ const readdir = (_path: string, _contentsPath: DirObject[] = []): DirObject => {
         }
         else if (content.isFile() && /^(readme|index)\.md$/.test(content.name)) {
             const file = fs.readFileSync(`${path.join(_path, content.name)}`).toString('utf8').split(/\r\n|\r|\n/).map((v) => {
-                const exec = /^\s*\[((\s*)|([0-9]+)|x)\]\s*/g.exec(v)
-                const execDone = /^\s*\[x\]\s*/g.exec(v)
+                const exec = /^\s*\[((\s*)|([0-9]+)|([0-9]*x))\]\s*/g.exec(v)
+                const execDone = /^\s*\[[0-9]*x\]\s*/g.exec(v)
                 if (exec) {
                     if (execDone) {
                         return 2
@@ -61,6 +64,11 @@ const readdir = (_path: string, _contentsPath: DirObject[] = []): DirObject => {
                     _contentsPath[i].done += (contents.content as any)[content.name].done
                 }
             }
+        }
+    }
+    if (!hasReadMe) {
+        for (let i = _contentsPath.length - 1; i >= 0; i --) {
+            _contentsPath[i].total ++
         }
     }
     return contents
@@ -101,25 +109,27 @@ const buildDocs = (dir: DirObject, dirs: DirObject[] = []) => {
         }
         const nodes: Node[] = [node]
         for (const line of file.split(/\r\n|\r|\n/)) {
-            if (/^\s*\[(\s*)|([0-9]+)\]\s*/.test(line)) {
+            if (/^\s*\[((\s+)|([0-9]+))?\]\s*/.test(line) && !/^\s*\[[0-9]+x\]/.test(line)) {
                 status = 'todo'
                 node = {
                     type: status,
-                    name: line.replace(/^\s*\[(\s*)|([0-9]+)\]\s*/g, ''),
-                    value: `\n_____\n## ❌ ${line.replace(/^\s*\[(\s*)|([0-9]+)\]\s*/g, '')}`,
+                    name: line.replace(/^\s*\[((\s+)|([0-9]+))?\]\s*/g, ''),
+                    value: `\n_____\n## ❌ ${line.replace(/^\s*\[((\s+)|([0-9]+))?\]\s*/g, '')}`,
                     index: /^\s*\[[0-9]+\]/.test(line)
                         ? Number(line.replace(/^\s*\[/g, '').replace(/\].*$/g, '')) - 1
                         : null
                 }
                 nodes.push(node)
             }
-            else if (/^\s*\[x\]\s*/.test(line)) {
+            else if (/^\s*\[[0-9]*x\]\s*/.test(line)) {
                 status = 'done'
                 node = {
                     type: status,
-                    name: line.replace(/^\s*\[x\]\s*/g, ''),
-                    value: `\n_____\n## ✅ ~~${line.replace(/^\s*\[x\]\s*/g, '')}~~`,
-                    index: null
+                    name: line.replace(/^\s*\[[0-9]*x\]\s*/g, ''),
+                    value: `\n_____\n## ✅ ~~${line.replace(/^\s*\[[0-9]*x\]\s*/g, '')}~~`,
+                    index: /^\s*\[[0-9]+x\]/.test(line)
+                        ? Number(line.replace(/^\s*\[/g, '').replace(/(?<=^[0-9]+)x.+$/g, ''))
+                        : null
                 }
                 nodes.push(node)
             }
@@ -145,9 +155,9 @@ const buildDocs = (dir: DirObject, dirs: DirObject[] = []) => {
             append(`\n${description.value}`)
         }
         if (!descriptionOnly) {
-            const indices = nodes.filter((v) => v.index !== null && v.type !== 'none')
-            if (indices.length) {
-                for (const index of indices.sort((x, y) => x.index! > y.index! ? 1 : y.index! > x.index! ? -1 : 0)) {
+            const indexedTodos = nodes.filter((v) => v.index !== null && v.type === 'todo')
+            if (indexedTodos.length) {
+                for (const index of indexedTodos.sort((x, y) => x.index! > y.index! ? 1 : y.index! > x.index! ? -1 : 0)) {
                     append(`\n${index.value}`)
                 }
             }
@@ -155,6 +165,12 @@ const buildDocs = (dir: DirObject, dirs: DirObject[] = []) => {
             if (todos.length) {
                 for (const todo of todos.sort((x, y) => (x.name || '') > (y.name || '') ? 1 : (y.name || '') > (x.name || '') ? -1 : 0)) {
                     append(`\n${todo.value}`)
+                }
+            }
+            const indexedDones = nodes.filter((v) => v.index !== null && v.type === 'done')
+            if (indexedDones.length) {
+                for (const index of indexedDones.sort((x, y) => x.index! > y.index! ? 1 : y.index! > x.index! ? -1 : 0)) {
+                    append(`\n${index.value}`)
                 }
             }
             const dones = nodes.filter((v) => v.type === 'done' && v.index === null)
@@ -213,17 +229,21 @@ const buildDocs = (dir: DirObject, dirs: DirObject[] = []) => {
                 
                 // Otherwise append to string
                 const backgroundColor = dir.done === dir.total
-                    ? '#85FF17'
+                    ? dir.done === 0
+                        ? '#FF1744'
+                        : '#85FF17'
                     : dir.done === 0
                         ? '#FF1744'
                         : '#FFF117'
                 const color = dir.done === dir.total
-                    ? '#222222'
+                    ? dir.done === 0
+                        ? '#FFFFFF'
+                        : '#222222'
                     : dir.done === 0
                         ? '#FFFFFF'
                         : '#222222'
                 const fontSize = (size === 'h1' ? 32 : 24) * 0.6
-                const badge = dir.done === dir.total
+                const badge = dir.done === dir.total && dir.total > 0
                     ? 'Done'
                     : `${dir.done} <span style="font-size: ${fontSize * 1.5}px; vertical-align: middle; font-weight: 300;">/</span> ${dir.total + todos.length}`
                 return `${text} <span style="background-color: ${backgroundColor}; color: ${color}; padding: 10px; border-radius: 100px; font-size: ${fontSize}px; vertical-align: top;">${badge}</span>`
@@ -256,7 +276,7 @@ const buildDocs = (dir: DirObject, dirs: DirObject[] = []) => {
                 ...subdirs.filter((v) => v.index === null && v.done < v.total).sort((x, y) => x.done > y.done ? -1 : y.done > x.done ? 1 : x.segment > y.segment ? 1 : y.segment > x.segment ? -1 : 0),
                 ...subdirs.filter((v) => v.index === null && v.done === v.total).sort((x, y) => x.segment > y.segment ? 1 : y.segment > x.segment ? -1 : 0)
             ].filter((v) => !['readme.md', 'index.md'].includes(v.segment))) {
-                const tildes = subdir.total - subdir.done === 0
+                const tildes = subdir.total - subdir.done === 0 && subdir.total > 0
                     ? `~~`
                     : ''
                 fileContent += `${generateTodoBadge(`## ${tildes}[${generateUpperCamelCaseKey(subdir)}](./${subdir.segment}/readme.md)${tildes}`, 'h2', subdir)}`

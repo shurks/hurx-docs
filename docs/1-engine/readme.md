@@ -1,0 +1,1 @@
+Manage local dependencies and watch for file changes in node_modules

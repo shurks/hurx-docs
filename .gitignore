@@ -1,4 +1,9 @@
-/node_modules
+**/*/modules/node/**/*
+**/*/node_modules/
+bin
+node_modules
+modules/node
+dist
 yarn.lock
 yarn-error.log
 package-lock.json

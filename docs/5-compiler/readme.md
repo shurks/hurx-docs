@@ -1,0 +1,1 @@
+Compiles Hurx to Typescript and Javascript
